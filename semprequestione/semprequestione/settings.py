@@ -67,6 +67,14 @@ ROBOTSTXT_OBEY = True
 #ITEM_PIPELINES = {
 #    'semprequestione.pipelines.SemprequestionePipeline': 300,
 #}
+ITEM_PIPELINES = {
+   'semprequestione.pipelines.SemprequestionePipeline':300,
+}
+# Config MongoDB
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "beagle"
+MONGODB_COLLECTION = "news"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

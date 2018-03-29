@@ -23,7 +23,7 @@ class SemprequestioneSpider(scrapy.Spider):
 
         next_page = response.xpath(
          #   '//a[contains(@class, "blog-pager-older-link")]/@href'
-         '//*[@id="Blog1_blog-pager-older-link"]/@href'
+         '//*[@id="Blog1_blog-pager-older-link"]/@href/text()'
         ).extract()
         next_page=response.urljoin(url)
         print("--------------------------------------------------------------------")
