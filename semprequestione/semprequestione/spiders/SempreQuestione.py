@@ -15,23 +15,22 @@ class SemprequestioneSpider(scrapy.Spider):
         )
         for item in items:
             url = item.xpath(
-                # ".//a[contains(@href, 'carro')]/@href"
-                ".//a/@href"
+                ".//a[contains(@href, 'papa') or contains(@href, 'vaticano')]/@href"
+                # ".//a/@href"
             ).extract_first()
-            yield scrapy.Request(url=url, callback=self.parse_detail)
+            if url:
+                yield scrapy.Request(url=url, callback=self.parse_detail)
 
 
         next_page = response.xpath(
          #   '//a[contains(@class, "blog-pager-older-link")]/@href'
-         '//*[@id="Blog1_blog-pager-older-link"]/@href/text()'
-        ).extract()
-        next_page=response.urljoin(url)
-        print("--------------------------------------------------------------------")
-        print(next_page)
-        print("--------------------------------------------------------------------")
+         'normalize-space(//*[@id="Blog1_blog-pager-older-link"]/@href)'
+        ).extract_first()
+        next_page=response.urljoin(next_page)
+        
         
         if next_page:
-           self.log('Next Page: {0}'.format(next_page))
+        #    self.log('Next Page: {0}'.format(next_page))
            yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_detail(self, response):
