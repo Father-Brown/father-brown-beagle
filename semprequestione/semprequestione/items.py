@@ -10,10 +10,18 @@ from scrapy.loader.processors import Join, MapCompose, TakeFirst
 from w3lib.html import remove_tags
 
 class SemprequestioneItem(scrapy.Item):
+    site = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=Join(),
+    )
     url = scrapy.Field(
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
     )
+    subTitle = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=Join(),
+    )    
     title = scrapy.Field(
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
@@ -26,4 +34,3 @@ class SemprequestioneItem(scrapy.Item):
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
     )
-

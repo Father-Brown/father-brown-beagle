@@ -15,12 +15,10 @@ class SemprequestioneSpider(scrapy.Spider):
         )
         for item in items:
             url = item.xpath(
-                ".//a[contains(@href, 'papa') or contains(@href, 'vaticano')]/@href"
-                # ".//a/@href"
+                ".//a[contains(@href, 'papa') or contains(@href, 'vaticano')]/@href"                
             ).extract_first()
             if url:
                 yield scrapy.Request(url=url, callback=self.parse_detail)
-
 
         next_page = response.xpath(
          #   '//a[contains(@class, "blog-pager-older-link")]/@href'
