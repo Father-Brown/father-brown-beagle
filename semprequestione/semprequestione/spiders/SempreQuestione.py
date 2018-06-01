@@ -32,7 +32,9 @@ class SemprequestioneSpider(scrapy.Spider):
            yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_detail(self, response):
-        loader = ItemLoader(item=SemprequestioneItem(), response=response)        
+        loader = ItemLoader(item=SemprequestioneItem(), response=response)
+        loader.add_value('site', 'semprequestione')
+        loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "post-title entry-title")])')
         loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span',)
