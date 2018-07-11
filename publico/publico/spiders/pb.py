@@ -2,35 +2,29 @@
 import scrapy
 from scrapy.loader import ItemLoader
 from publico.items import PublicoItem
+import json
 
 class PbSpider(scrapy.Spider):
     name = 'pb'
     allowed_domains = ['www.publico.pt']
-    start_urls = ['http://www.publico.pt/pesquisa?query=papa']
+    base_url = 'https://www.publico.pt/api/list/search/?query=papa&start=&end=&page=%d'
+    index = 1
+    start_urls = [base_url % index]
+    
 
     def parse(self, response):
-        match = "contains(text(), 'papa') or contains(text(), 'Papa') or contains(text(), 'vaticano') or contains(text(), 'Vaticano')"
-        items = response.xpath(
-           '//div[contains(@class, "media-object-section")]'
-        )        
-        for item in items:
-            titulo = item.xpath(                
-                ".//h4["+match+"]"
-            ).extract_first()
-            url = item.xpath(
-                ".//a/@href"                
-            ).extract_first()
-            # if url and titulo:                
-            #     yield scrapy.Request(url=url, callback=self.parse_detail, dont_filter=True)
-
-        next_page = response.xpath(
-           '//a[contains(@class, "module__button module__button--more append-content")]/@href'         
-        ).extract_first()
-        next_page=response.urljoin(next_page)        
+        json_data = json.loads(response.text)
+        for data in json_data:
+            url = data['url']                 
+            if url: 
+                yield scrapy.Request(url=url, callback=self.parse_detail, dont_filter=True)
+        if json_data:
+            self.index += 1
+            next_page = self.base_url % self.index
+            self.log('Next Page: {0}'.format(next_page))
+            yield scrapy.Request(url=next_page, callback=self.parse)
         
-        if next_page:
-           self.log('Next Page: {0}'.format(next_page))
-           yield scrapy.Request(url=next_page, callback=self.parse)
+        
 
     def parse_detail(self, response):
         loader = ItemLoader(item=PublicoItem(), response=response)
