@@ -10,12 +10,13 @@ class SemprequestioneSpider(scrapy.Spider):
     start_urls = ['http://www.semprequestione.com/']
 
     def parse(self, response):
+        match = "contains(text(), 'papa') or contains(text(), 'Papa') or contains(text(), 'vaticano') or contains(text(), 'Vaticano')"
         items = response.xpath(
             '//h2[contains(@class,"post-title entry-title")]'
         )
         for item in items:
             url = item.xpath(
-                ".//a[contains(@href, 'papa') or contains(@href, 'vaticano')]/@href"                
+                ".//a["+match+"]/@href"                
             ).extract_first()
             if url:
                 yield scrapy.Request(url=url, callback=self.parse_detail)

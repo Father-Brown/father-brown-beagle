@@ -9,12 +9,13 @@ class DcSpider(scrapy.Spider):
     start_urls = ['https://www.diariodocentrodomundo.com.br/?s=papa']
 
     def parse(self, response):
+        match = "contains(text(), 'papa') or contains(text(), 'Papa') or contains(text(), 'vaticano') or contains(text(), 'Vaticano')"
         items = response.xpath(
             '//h3[contains(@class,"entry-title td-module-title")]'
         )
         for item in items:            
             url = item.xpath(
-                ".//a[contains(@href, 'papa') or contains(@href, 'vaticano')]/@href"                
+                ".//a["+match+"]/@href"
             ).extract_first()            
             if url:
                 yield scrapy.Request(url=url, callback=self.parse_detail)
