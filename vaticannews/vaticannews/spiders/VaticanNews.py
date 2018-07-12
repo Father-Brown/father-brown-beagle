@@ -4,23 +4,31 @@ import scrapy
 from scrapy.loader import ItemLoader
 from vaticannews.items import VaticannewsItem
 import js2xml
+from math import ceil
 
 
 class VaticannewsSpider(scrapy.Spider):
     name = 'VaticanNews'
     allowed_domains = ['www.vaticannews.va']
-    start_urls = ['https://www.vaticannews.va/bin/servlet/fusion/search?queryroute=vaticannews-search-main&q=papa&fq=lang_s:pt&sort=editorial_date_dt%20desc,id%20asc&rows=18&qId=09144a4b-7979-49e5-8efc-8b08805adf0a']    
+    start = 0
+    base_url ="https://www.vaticannews.va/bin/servlet/fusion/search?queryroute=vaticannews-search-main&q=papa&fq=lang_s:pt&sort=editorial_date_dt%%20desc,id%%20asc&rows=18&start=%d&qId=09144a4b-7979-49e5-8efc-8b08805adf0a"
+    start_urls = [base_url % start]
+    
 
     def parse(self, response):
         data = json.loads(response.body)
         for item in data.get('response', [])['docs']:
             if item['preview_type_s'] == 'article[Artigo]':
                 url = response.urljoin(item['url_descendent_path'])
-                # yield scrapy.Request(url=url, callback=self.parse_detail)
+                yield scrapy.Request(url=url, callback=self.parse_detail)
 
         total_itens = int(data.get('response', [])['numFound'])
-        #len(data.get('response', [])['docs'])
-        self.log(total_itens)
+        total_noticias = len(data.get('response', [])['docs'])
+        paginas = ceil(total_itens/total_noticias)
+        for page in range(1,paginas):
+            next_page = self.base_url % (page*total_noticias)
+            self.log('Next Page: {0}'.format(next_page))
+            yield scrapy.Request(url=next_page, callback=self.parse)
      
     def parse_detail(self, response):
         loader = ItemLoader(item=VaticannewsItem(), response=response)
