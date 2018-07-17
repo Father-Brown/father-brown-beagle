@@ -27,10 +27,12 @@ class DiariodocentrodomundoPipeline(object):
             "title":item['title'],
             "subTitle":item['subTitle'],
             "content":item['content'],
+            "autor":item['autor'],
             "tipo":'None'
             }
 
         data = json.dumps(data)
+        print(data)
         response = self.post("http://localhost:5000/save/news", data)
         return item
 

@@ -27,11 +27,12 @@ class DcSpider(scrapy.Spider):
         if next_page:
            self.log('Next Page: {0}'.format(next_page))
            yield scrapy.Request(url=next_page, callback=self.parse)
-    def parse_detail(self, response):
+    def parse_detail(self, response):        
         loader = ItemLoader(item=DiariodocentrodomundoItem(), response=response)
         loader.add_value('site', 'diariodocentrodomundo')
         loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "entry-title")])')
         loader.add_xpath('content', 'normalize-space(//div[contains(@class, "td-post-content td-pb-padding-side")]//p)',)
+        loader.add_xpath('autor', 'normalize-space(//div[contains(@class, "td-post-author-name")]/a/text())')
         return loader.load_item()
