@@ -40,4 +40,5 @@ class SemprequestioneSpider(scrapy.Spider):
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "post-title entry-title")])')
         loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span',)
         loader.add_xpath('autor', 'normalize-space(//span[contains(@itemprop, "name")])')
+        loader.add_xpath('datePublished', 'normalize-space(//abbr[contains(@itemprop, "datePublished")]/@title)')
         return loader.load_item()

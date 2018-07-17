@@ -23,7 +23,7 @@ class DcSpider(scrapy.Spider):
         next_page = response.xpath(         
          "//a[./i[contains(@class, 'td-icon-menu-right')]]/@href"
         ).extract_first()
-        next_page=response.urljoin(next_page)        
+        next_page=response.urljoin(next_page)
         if next_page:
            self.log('Next Page: {0}'.format(next_page))
            yield scrapy.Request(url=next_page, callback=self.parse)
@@ -35,4 +35,5 @@ class DcSpider(scrapy.Spider):
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "entry-title")])')
         loader.add_xpath('content', 'normalize-space(//div[contains(@class, "td-post-content td-pb-padding-side")]//p)',)
         loader.add_xpath('autor', 'normalize-space(//div[contains(@class, "td-post-author-name")]/a/text())')
+        loader.add_xpath('datePublished', 'normalize-space(//time[contains(@class, "entry-date updated td-module-date")]/@datetime)')
         return loader.load_item()
