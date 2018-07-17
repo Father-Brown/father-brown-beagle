@@ -34,3 +34,7 @@ class SemprequestioneItem(scrapy.Item):
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
     )
+    autor = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=Join(),
+    )

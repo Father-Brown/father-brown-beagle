@@ -27,6 +27,7 @@ class SemprequestionePipeline(object):
             "title":item['title'],
             "subTitle":item['subTitle'],
             "content":item['content'],
+            "autor":item['autor'],
             "tipo":'None'
             }
 
