@@ -29,7 +29,8 @@ class SemprequestionePipeline(object):
             "content":item['content'],
             "autor":item['autor'],
             "datePublished":item['datePublished'],
-            "tipo":'None'
+            "tipo":'None',
+            "font":'None'
             }
 
         data = json.dumps(data)
