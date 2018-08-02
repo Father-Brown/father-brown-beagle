@@ -34,11 +34,11 @@ class SemprequestioneSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         loader = ItemLoader(item=SemprequestioneItem(), response=response)
-        loader.add_value('site', 'semprequestione')
+        loader.add_value('site', self.name)
         loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "post-title entry-title")])')
-        loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span',)
+        loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span/text()[not(ancestor::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos")])][not(descendant::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos")])]',)
         loader.add_xpath('autor', 'normalize-space(//span[contains(@itemprop, "name")])')
         loader.add_xpath('datePublished', 'normalize-space(//abbr[contains(@itemprop, "datePublished")]/@title)')
         return loader.load_item()
