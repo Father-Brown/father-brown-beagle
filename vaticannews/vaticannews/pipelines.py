@@ -21,15 +21,20 @@ class VaticannewsPipeline(object):
         if response.status == 404:
             site ={"name": settings['BOT_NAME'], "url": "www.vaticannews.va"}
             self.post('http://localhost:5000/save/site', json.dumps(site))
+     
         data = {
             "site":item['site'],
             "url":item['url'],
             "title":item['title'],
             "subTitle":item['subTitle'],
             "content":item['content'],
-            "tipo":'None'
+            "autor":item['autor'],
+            "datePublished":item['datePublished'],
+            "tipo":'None',
+            "font":'None'
             }
-        self.println(data)
+
+        
         data = json.dumps(data)
         response = self.post("http://localhost:5000/save/news", data)
         return item
@@ -44,12 +49,4 @@ class VaticannewsPipeline(object):
         return self.http.request('POST',url,
             body=data,
             headers={'Content-Type': 'application/json'})
-
-    def println(self, item):
-        print("----------------------------------------------------")
-        print("")
-        print("")
-        print(item)
-        print("")
-        print("")
-        print("----------------------------------------------------")
+   

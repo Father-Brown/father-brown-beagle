@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy.conf import settings
 from scrapy.loader import ItemLoader
 from semprequestione.items import SemprequestioneItem
 
@@ -33,12 +34,15 @@ class SemprequestioneSpider(scrapy.Spider):
            yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_detail(self, response):
+        font = response.xpath(
+                '//div[contains(@class, "post-body entry-content")]//span[contains(text(), "Font")]//a/@href'
+            ).extract_first();
         loader = ItemLoader(item=SemprequestioneItem(), response=response)
-        loader.add_value('site', self.name)
+        loader.add_value('site', settings['BOT_NAME'])
         loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "post-title entry-title")])')
-        loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span/text()[not(ancestor::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos")])][not(descendant::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos")])]',)
+        loader.add_xpath('content', '//div[contains(@class, "post-body entry-content")]//div//span/text()[not(ancestor::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos")])][not(descendant::*[contains(text(),"Veja também") or contains(text(),"Leia também") or contains(text(),"Recomendamos") or contains(text(),"Fonte")])]')
         loader.add_xpath('autor', 'normalize-space(//span[contains(@itemprop, "name")])')
         loader.add_xpath('datePublished', 'normalize-space(//abbr[contains(@itemprop, "datePublished")]/@title)')
         return loader.load_item()

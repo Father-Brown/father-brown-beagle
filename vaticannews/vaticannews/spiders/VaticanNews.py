@@ -5,6 +5,7 @@ from scrapy.loader import ItemLoader
 from vaticannews.items import VaticannewsItem
 import js2xml
 from math import ceil
+import re
 
 
 class VaticannewsSpider(scrapy.Spider):
@@ -27,17 +28,29 @@ class VaticannewsSpider(scrapy.Spider):
         paginas = ceil(total_itens/total_noticias)
         for page in range(1,paginas):
             next_page = self.base_url % (page*total_noticias)
-            self.log('Next Page: {0}'.format(next_page))
+            # self.log('Next Page: {0}'.format(next_page))
             yield scrapy.Request(url=next_page, callback=self.parse)
      
     def parse_detail(self, response):
+        self.log("")
+        self.log("")
+
+        autor = response.xpath(
+            '//div[contains(@class, "article__text")]//p//b/text()'
+        ).extract_first()
+        autor = re.sub("[–|-][A-Za-z ]*", "", autor)
+
+        
         loader = ItemLoader(item=VaticannewsItem(), response=response)
         loader.add_value('site', 'vaticannews')
         loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
+        loader.add_value('autor', autor)
+        loader.add_xpath('datePublished', '//div[contains(@class, "article__extra")]//span/text()')        
         loader.add_xpath(
             'title', 'normalize-space(//h1[contains(@class, "article__title")])')
         loader.add_xpath(
             'content', '//div[contains(@class, "article__text")]//p',)
+            
         return loader.load_item()
     
