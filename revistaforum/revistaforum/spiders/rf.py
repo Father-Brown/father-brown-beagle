@@ -2,6 +2,7 @@
 import scrapy
 from scrapy.loader import ItemLoader
 from revistaforum.items import RevistaforumItem
+import re
 
 class RfSpider(scrapy.Spider):
     name = 'rf'
@@ -15,7 +16,7 @@ class RfSpider(scrapy.Spider):
         )
         for item in items:
             url = item.xpath(
-                ".//a["+match+")]/@href"                
+                ".//a["+match+"]/@href"                
             ).extract_first()
             if url:
                 yield scrapy.Request(url=url, callback=self.parse_detail)
@@ -28,12 +29,24 @@ class RfSpider(scrapy.Spider):
         if next_page:
            self.log('Next Page: {0}'.format(next_page))
            yield scrapy.Request(url=next_page, callback=self.parse)
-    def parse_detail(self, response):       
+    def parse_detail(self, response):
+        autor = response.xpath(
+            'normalize-space(//div[contains(@class, "author")]//div//a/text())'
+        ).extract_first()
+        autor = re.sub('Por', '', autor)
+        
+        data = response.xpath(
+            'normalize-space(//span[contains(@class, "date")]/text())'
+        ).extract_first()
+        
+        
         loader = ItemLoader(item=RevistaforumItem(), response=response)
         loader.add_value('site', 'revistaforum')
         loader.add_value('subTitle', '')
         loader.add_value('url', response.url)
         loader.add_xpath('title', '//h1')
-        loader.add_xpath('content', 'normalize-space(//div[contains(@class, "text")]//p)',)
+        loader.add_xpath('content', 'normalize-space(//div[contains(@class, "text")]//p/text())')
+        loader.add_value('autor', autor)
+        loader.add_value('datePublished', data)
         return loader.load_item()
                 
