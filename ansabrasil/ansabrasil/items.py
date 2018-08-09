@@ -21,7 +21,7 @@ class AnsabrasilItem(scrapy.Item):
     subTitle = scrapy.Field(
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
-    )
+    )    
     title = scrapy.Field(
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
@@ -31,6 +31,14 @@ class AnsabrasilItem(scrapy.Item):
         output_processor=Join(),
     )
     content = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=Join(),
+    )
+    autor = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=Join(),
+    )
+    datePublished = scrapy.Field(
         input_processor=MapCompose(remove_tags),
         output_processor=Join(),
     )

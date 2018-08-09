@@ -29,11 +29,13 @@ class AnsaSpider(scrapy.Spider):
         #    self.log('Next Page: {0}'.format(next_page))
            yield scrapy.Request(url=next_page, callback=self.parse)
     
-    def parse_detail(self, response):      
+    def parse_detail(self, response):        
         loader = ItemLoader(item=AnsabrasilItem(), response=response)
         loader.add_value('site', 'ansabrasil')
         loader.add_xpath('subTitle', 'normalize-space(.//h2)')
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(.//h1)')
-        loader.add_xpath('content', '//div[contains(@class, "news-txt")]//p',)
+        loader.add_xpath('content', '//div[contains(@class, "news-txt")]//p[not(contains(@class, "news-copy"))]')
+        loader.add_value('autor', 'ansabrasil')
+        loader.add_xpath('datePublished', 'normalize-space(//div[contains(@class, "news-info")]/span)')
         return loader.load_item()

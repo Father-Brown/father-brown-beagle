@@ -9,6 +9,7 @@ from scrapy.exceptions import DropItem
 from scrapy import log
 import json
 import urllib3
+import re
 
 class AnsabrasilPipeline(object):
     def __init__(self):
@@ -21,13 +22,17 @@ class AnsabrasilPipeline(object):
             site ={"name": settings['BOT_NAME'], "url": "www.semprequestione.com"}
             self.post('http://localhost:5000/save/site', json.dumps(site))
 
+        content = re.sub('\(ANSA\)', '', item['content'])
         data = {
             "site":item['site'],
             "url":item['url'],
             "title":item['title'],
             "subTitle":item['subTitle'],
-            "content":item['content'],
-            "tipo":'None'
+            "content":content,
+            "autor":item['autor'],
+            "datePublished":item['datePublished'],
+            "tipo":'None',
+            "font":'None'
             }
 
         data = json.dumps(data)
