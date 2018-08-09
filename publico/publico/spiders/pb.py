@@ -33,5 +33,7 @@ class PbSpider(scrapy.Spider):
         loader.add_value('url', response.url)
         loader.add_xpath('title', 'normalize-space(//h1[contains(@class, "headline story__headline")])')
         loader.add_xpath('content', '//div[contains(@class, "story__body")]//p',)
+        loader.add_xpath('autor', 'normalize-space(//span[contains(@class, "byline__name")]/text())')
+        loader.add_xpath('datePublished', 'normalize-space(//time[contains(@class, "dateline")]/@datetime)')
         return loader.load_item()
         

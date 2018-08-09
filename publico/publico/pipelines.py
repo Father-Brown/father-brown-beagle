@@ -27,8 +27,11 @@ class PublicoPipeline(object):
             "title":item['title'],
             "subTitle":item['subTitle'],
             "content":item['content'],
-            "tipo":'None'
-            }
+            "autor":item['autor'],
+            "datePublished":item['datePublished'],
+            "tipo":'None',
+            "font":'None'
+           }
 
         data = json.dumps(data)
         response = self.post("http://localhost:5000/save/news", data)
